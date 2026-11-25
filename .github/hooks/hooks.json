@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": ".github/hooks/block-destructive.sh",
+        "comment": "Block destructive git and file operations"
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "dotnet build Kantilever.WarehouseService.sln --nologo -v quiet 2>&1 | tail -5",
+        "comment": "Build after file edits to catch compile errors"
+      }
+    ]
+  }
+}

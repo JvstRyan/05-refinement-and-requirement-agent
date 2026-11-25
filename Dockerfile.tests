@@ -1,0 +1,39 @@
+# ── test image ──────────────────────────────────────────────────────────────
+# Runs the WarehouseService test suites without requiring a local .NET SDK.
+#
+# Build context must be the solution root:
+#   docker build -f Dockerfile.tests -t kantilever-warehouseservice-tests .
+#
+# Run everything (Unit + BDD Spec tests only - see note below for Integration):
+#   docker run --rm kantilever-warehouseservice-tests
+#
+# Run a single suite:
+#   docker run --rm kantilever-warehouseservice-tests test Kantilever.WarehouseService.Test/
+#
+# NOTE on Integration tests: Kantilever.WarehouseService.IntegrationTest uses
+# Testcontainers to spin up its own ephemeral Postgres/RabbitMQ containers.
+# Running that suite from *inside* this image additionally requires mounting
+# the host's container engine socket and reaching sibling containers over the
+# network - see Test.ps1 / Test.sh, which automate this (with a documented
+# fallback to running Integration tests locally if it doesn't work on your
+# platform).
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /src
+COPY nuget.config ./
+COPY _localFeed/ /_localFeed/
+COPY Kantilever.WarehouseService/Kantilever.WarehouseService.csproj ./Kantilever.WarehouseService/
+COPY Kantilever.WarehouseService.Test/Kantilever.WarehouseService.Test.csproj ./Kantilever.WarehouseService.Test/
+COPY Kantilever.WarehouseService.Spec/Kantilever.WarehouseService.Spec.csproj ./Kantilever.WarehouseService.Spec/
+COPY Kantilever.WarehouseService.IntegrationTest/Kantilever.WarehouseService.IntegrationTest.csproj ./Kantilever.WarehouseService.IntegrationTest/
+RUN dotnet restore ./Kantilever.WarehouseService.Test/Kantilever.WarehouseService.Test.csproj \
+ && dotnet restore ./Kantilever.WarehouseService.Spec/Kantilever.WarehouseService.Spec.csproj \
+ && dotnet restore ./Kantilever.WarehouseService.IntegrationTest/Kantilever.WarehouseService.IntegrationTest.csproj
+COPY Kantilever.WarehouseService/ ./Kantilever.WarehouseService/
+COPY Kantilever.WarehouseService.Test/ ./Kantilever.WarehouseService.Test/
+COPY Kantilever.WarehouseService.Spec/ ./Kantilever.WarehouseService.Spec/
+COPY Kantilever.WarehouseService.IntegrationTest/ ./Kantilever.WarehouseService.IntegrationTest/
+COPY entrypoint.tests.sh /entrypoint.tests.sh
+RUN chmod +x /entrypoint.tests.sh
+
+ENTRYPOINT ["/entrypoint.tests.sh"]
+

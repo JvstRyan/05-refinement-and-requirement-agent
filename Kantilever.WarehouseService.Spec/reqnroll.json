@@ -1,0 +1,29 @@
+{
+  "language": {
+    "feature": "en"
+  },
+  "bindingAssemblies": [
+    {
+      "assembly": "Kantilever.WarehouseService.Spec"
+    }
+  ],
+  "stepAssemblies": [
+    {
+      "assembly": "Kantilever.WarehouseService.Spec"
+    }
+  ],
+  "generator": {
+    "allowDebugGeneratedFiles": false,
+    "markFeaturesParallelizable": false
+  },
+  "runtime": {
+    "stopAtFirstError": false,
+    "missingOrPendingStepsOutcome": "Inconclusive"
+  },
+  "trace": {
+    "traceSuccessfulSteps": true,
+    "traceTimings": false,
+    "minTracedDuration": "0:0:0.1",
+    "stepDefinitionSkeletonStyle": "RegexAttribute"
+  }
+}

@@ -1,0 +1,9 @@
+# Never send local build artifacts into the Docker/Podman build context -
+# these can be stale or built with a different SDK/config than the container,
+# and would silently corrupt the containerized restore/publish output.
+**/bin/
+**/obj/
+**/TestResults/
+**/*.user
+.git/
+.vs/
